@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Campaign Card</title>
+<link href="https://fonts.googleapis.com/css?family=Fira+Sans|Open+Sans" rel="stylesheet">
+<script src="https://checkout.stripe.com/checkout.js"></script>
+	<script>
+function createStripe(){
+var bod = document.getElementsByTagName("body");
+console.log(bod);
+
+}
+
+function landTopDonors(data){
+	var tested = IsJsonString(data);
+    var totalAmount = 0;
+	if(tested === true){
+		data = JSON.parse(data);
+		landing = document.getElementById('top_donors');
+
+		var topd = "<table class='topDonorsTable'><tr><th>Donors</th><th>Dollars</th><th>Type</th></tr>";
+		for(var i = 0; i < data.length; i++){
+			totalAmount += data[i].amount;
+			topd+="<tr><td>"+data[i].name+"</td><td>"+data[i].amount+"</td><td>"+data[i].type+"</td></tr>";
+		}
+		topd+="</table>";
+		landing.innerHTML = topd;
+	}  else {
+		landing = document.getElementById('top_donors');
+		landing.innerHTML = "<h3>The Top Donors couldn't be loaded</h3>";
+	}
+	var tamount = document.getElementById("totalAmount");
+	totalAmount = totalAmount.toFixed(0);
+	tamount.innerHTML= 	"$"+parseFloat(totalAmount).toLocaleString('en');
+}
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+document.addEventListener("DOMContentLoaded", function(){
+	var elem2 = document.getElementById("percent");
+	var elemSet = document.getElementById("bar");
+	var dataMark;
+	var setDiv = "<div class='purplebackground barset' style='width:"+elem2.innerHTML+";'></div>";
+	elemSet.innerHTML += setDiv;
+	var xhr = new XMLHttpRequest();
+	var testdata = xhr.open("GET", "topDonors.json", true);
+	xhr.onload = function() {
+    if (xhr.status === 200) {
+        var dataMark = xhr.responseText;
+        landTopDonors(dataMark);
+    }
+    else {
+        alert('Request failed.  Returned status of ' + xhr.status);
+    }
+};
+
+var testsend = xhr.send();
+var handler = StripeCheckout.configure({
+  key: 'pk_test_TYooMQauvdEDq54NiTphI7jx',
+  image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+  locale: 'auto',
+  token: function(token) {
+    // You can access the token ID with `token.id`.
+    // Get the token ID to your server-side code for use.
+  }
+});
+
+document.getElementById('stripeCheckoutBtn').addEventListener('click', function(e) {
+  // Open Checkout with further options:
+  handler.open({
+    name: 'Stripe.com',
+    description: '2 widgets',
+    zipCode: true,
+    amount: 2000
+  });
+  e.preventDefault();
+});
+
+// Close Checkout on page navigation:
+window.addEventListener('popstate', function() {
+  handler.close();
+});
+});
+
+	</script>
+	<style>
+		* {font-family: 'Open Sans', sans-serif;}
+		body{ height:100%; }
+		.container{ padding-top:200px; }
+		.card{  margin-left:auto; margin-right:auto; width:810px;}
+		.card .front, .card .back{ width:380px; height:590px; display:inline-block; margin-right:15px; vertical-align:top; -webkit-box-shadow: 0px 2px 5px 4px rgba(232,232,232,1); -moz-box-shadow: 0px 2px 5px 4px rgba(232,232,232,1); box-shadow: 0px 2px 5px 4px rgba(232,232,232,1);}
+		.back .back_container{ padding:10px; text-align:center;}
+		.back_container table{ width:100%; border-collapse: collapse;}
+		.back_container table.topDonorsTable tr td:first-child{ text-align:left; }
+		.back_container table.topDonorsTable tr th:first-child{ text-align:left; }
+		.back_container table.topDonorsTable tr td:last-child{ text-align:right; }
+		.back_container table.topDonorsTable tr th:last-child{ text-align:right; }
+		.back_container table.topDonorsTable tr td, .back_container table.topDonorsTable tr th{ padding:5px 0px; font-size:14px}
+		.back_container table.topDonorsTable tr{  border-top:2px solid #e5e5e5; border-bottom:2px solid #e5e5e5;}
+		.card-flip{ width:810px; }
+		.card .front img{ width:100%; }
+		.purple{ color:	#9932CC; }
+		.purplebackground{ background:#9932CC; }
+		.front-text{ padding:10px;}
+		.back .toptitle{ text-align:center; padding-top:15px;}
+		.bold{ font-weight:bold; }
+		.title h3{ margin:0px; }
+		.title h4{ margin-top:5px; }
+		.title p{ color:grey; font-size:14px; }
+		.barset { height:40px; display:block;}
+		.toprow_data{width:100%;}
+		#totalAmount{ font-size:24px; }
+		.bottom_btn .btn{ padding:8px 20px; width:180px; background-color:#9932CC; color:white; font-weight:bold; border-radius:24px; margin-top:20px; cursor:pointer; }
+		.bottom_btn .btn:hover{opacity:.8;}
+		.bottom_btn .btn:active, .bottom_btn .btn:focus{ outline:0; }
+		#percent, .drive{ width:auto; float:left; display:inline-block; }
+		.donors,  .donated{ width:auto; float:right; display:inline-block; }
+		.info{ display:block; height:30px; margin-top:40px;}
+		.info2{ display:block; height:30px; margin-top:10px;}
+		#bar{background-color: #ccc; width:100%; height:40px; display:block; }
+		
+	</style>
+</head>
+<body>
+	<div class='container'>
+		<div class='card'>
+			<div class='front'>
+				<img src="img/college.png" alt="">
+				<div class="front-text">
+					<div class='title '>
+						<h3 class='purple'>Class of 2017 Challenge</h3>
+						<h4>For College of the Holy Cross</h4>
+						<p>$25,000 is on the line. Please make a gift today to honor Dean Paco and help 2017 reach 60%!</p>
+					</div>
+					<div class='status slider'>
+						<div class='toprow_data'>
+							<div class='info'><div id="percent">75%</div><div class='donors'>471 Donors</div></div>
+				
+							<div id='bar'></div>
+							<div class='info2'><div class="drive">Active</div><div class="donated"><span class='bold'>$19,096</span> Donated</div></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='back'>
+				<div class='back_container'>
+					<div class='title '>
+						<h3 class='purple toptitle' >Class of 2017 Challenge</h3>
+						<h4 class=''> Top Donors</h4>
+						<div id='top_donors'>
+
+						</div>
+						<div class='bottom_btn'>
+							<button class='btn' id="stripeCheckoutBtn">MAKE A GIFT</button>
+						</div>
+					</div>
+					<div>
+						<h4 id="totalAmount"></h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
