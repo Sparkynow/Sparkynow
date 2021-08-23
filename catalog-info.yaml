@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: Sparkynow
+  description: SparkyNow
+  labels: 
+  annotations:
+  tags:
+    - Javscript
+  links:
+    - url: https://github.com/Sparkynow/Sparkynow
+spec:
+  type: website
+  lifecycle: production
+  owner: Sparknic1
+  system: Private
